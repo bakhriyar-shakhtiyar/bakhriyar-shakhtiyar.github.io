@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Falling balls</title>
+<style>
+    canvas {
+        border: 1px solid black;
+    }
+</style>
+</head>
+<body>
+<canvas id="gameCanvas" width="400" height="400"></canvas>
+
+<script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    const gridSize = 5; // Change this to increase/decrease grid size
+	const gridSizeA = 5;
+	const gridSizeB = 9;
+    const cellSizeA = canvas.width / gridSizeA;
+	const cellSizeB = canvas.height / gridSizeB;
+
+    let grid = [];
+
+    // Initialize grid with random colors
+    function initializeGrid() {
+        for (let i = 0; i < gridSizeA; i++) {
+            grid[i] = [];
+            for (let j = 0; j < gridSizeB; j++) {
+                grid[i][j] = Math.floor(Math.random() * 4); // Random number between 0 and 3
+            }
+        }
+    }
+
+    // Draw grid
+function drawGrid() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < gridSizeA; i++) {
+        for (let j = 0; j < gridSizeB; j++) {
+            if (grid[i][j] !== -1) {
+                ctx.fillStyle = getColor(grid[i][j]);
+                let x = (i * canvas.width) / gridSizeA + (canvas.width / (gridSizeA * 2));
+                let y = (j * canvas.height) / gridSizeB + (canvas.height / (gridSizeB * 2));
+                let radius = Math.min(cellSizeA / 2, cellSizeB / 2); // Using the minimum of the two cell sizes for radius
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+    }
+}
+
+    // Get color based on the color index
+    function getColor(index) {
+        switch (index) {
+            case 0:
+                return "IndianRed ";
+            case 1:
+                return "CornflowerBlue";
+            case 2:
+                return "DimGray";
+            case 3:
+                return "Gold";
+            default:
+                return "white";
+        }
+    }
+
+// Handle mouse click
+canvas.addEventListener("click", function(event) {
+    const rect = canvas.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    const i = Math.floor(x / cellSizeA);
+    const j = Math.floor(y / cellSizeB);
+    
+    if (i >= 0 && i < gridSizeA && j >= 0 && j < gridSizeB && grid[i][j] !== -1) {
+        // Mark the cell as empty
+        grid[i][j] = -1;
+
+        // Redraw the grid without the removed cell
+        drawGrid();
+		animateFalling();
+    }
+});
+
+// Function to animate falling elements
+function animateFalling() {
+    let animationInterval = setInterval(function() {
+        let falling = false;
+
+        // Loop through the grid to check for empty cells and elements to fall
+        for (let i = gridSizeA - 1; i >= 0; i--) {
+            for (let j = gridSizeB - 1; j >= 0; j--) {
+                if (grid[i][j] === -1) {
+                    // If there is an empty cell, check if there are elements above to fall
+                    if (j > 0 && grid[i][j - 1] !== -1) {
+                        // Move the element above to the empty cell
+                        grid[i][j] = grid[i][j - 1];
+                        grid[i][j - 1] = -1;
+                        falling = true;
+                    }
+                }
+            }
+        }
+
+        // Redraw the grid with updated positions
+        drawGrid();
+
+        // If no elements are falling anymore, refill the top row with new random colors
+        if (!falling) {
+            for (let i = 0; i < gridSizeA; i++) {
+                if (grid[i][0] === -1) {
+                    grid[i][0] = Math.floor(Math.random() * 4); // Random number between 0 and 3
+                }
+            }
+            drawGrid(); // Redraw the grid with new elements added on top
+            clearInterval(animationInterval);
+        }
+    }, 100); // Adjust the interval for smoother or faster animation
+}
+    // Initialize and draw grid
+    initializeGrid();
+    drawGrid();
+</script>
+</body>
+</html>
