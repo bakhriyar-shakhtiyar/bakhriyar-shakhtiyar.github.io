@@ -88,7 +88,7 @@
         const i = Math.floor(x / cellSizeA);
         const j = Math.floor(y / cellSizeB);
         
-        if (i >= 0 && i < gridSizeA && j >= 0 && j < gridSizeB && grid[i][j] !== -1) {
+        if (i >= 0 && i < gridSizeA && j > 0 && j < gridSizeB && grid[i][j] !== -1) {
             // Increment counters based on the color of the ball clicked
             switch (grid[i][j]) {
                 case 0:
