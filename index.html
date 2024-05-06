@@ -18,7 +18,7 @@
     <p>Black: <span id="grayCounter">0</span></p>
     <p>Yellow: <span id="goldCounter">0</span></p>
 </div>
-<button id="resetButton">Reset</button>
+<button id="resetButton">Reset counters</button>
 
 <script>
     const canvas = document.getElementById("gameCanvas");
@@ -156,7 +156,6 @@
 
     // Reset button functionality
     document.getElementById("resetButton").addEventListener("click", function() {
-        initializeGrid();
         drawGrid();
         redCount = 0;
         blueCount = 0;
